@@ -1,237 +1,444 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<title>Genetic Engineering Timeline Game</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Genetic Engineering Timeline Game</title>
+  <style>
+    :root {
+      --bg: #f6f8fc;
+      --card: #ffffff;
+      --text: #1f2937;
+      --muted: #6b7280;
+      --border: #d9e2ec;
+      --blue: #2563eb;
+      --green: #16a34a;
+      --red: #dc2626;
+      --shadow: 0 10px 25px rgba(15, 23, 42, 0.08);
+    }
 
-<style>
+    * { box-sizing: border-box; }
 
-body{
-font-family:Arial;
-background:#f5f7fb;
-padding:30px;
-}
+    body {
+      margin: 0;
+      font-family: Arial, Helvetica, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      padding: 24px;
+    }
 
-h1{
-margin-bottom:10px;
-}
+    .app {
+      max-width: 1300px;
+      margin: 0 auto;
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      box-shadow: var(--shadow);
+      padding: 24px;
+    }
 
-.wordbank{
-border:3px solid black;
-padding:15px;
-margin-bottom:40px;
-background:white;
-}
+    h1 {
+      margin: 0 0 8px;
+      font-size: 2rem;
+    }
 
-.wordbank h2{
-text-align:center;
-}
+    .subtle {
+      color: var(--muted);
+      margin-bottom: 18px;
+      line-height: 1.5;
+    }
 
-.bank{
-display:flex;
-flex-wrap:wrap;
-gap:10px;
-}
+    .word-bank {
+      border: 2px solid #374151;
+      border-radius: 14px;
+      padding: 16px;
+      margin-bottom: 28px;
+      background: #fff;
+    }
 
-.card{
-background:#e7f0ff;
-border:1px solid #8fb4ff;
-padding:8px 10px;
-border-radius:8px;
-cursor:grab;
-}
+    .word-bank h2 {
+      margin: 0 0 14px;
+      text-align: center;
+      font-size: 1.5rem;
+    }
 
-.timeline{
-display:grid;
-grid-template-columns:repeat(16,1fr);
-gap:10px;
-align-items:end;
-margin-top:40px;
-}
+    .bank-items {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      min-height: 80px;
+    }
 
-.slot{
-display:flex;
-flex-direction:column;
-align-items:center;
-}
+    .event-card {
+      background: #eff6ff;
+      border: 1px solid #bfdbfe;
+      border-radius: 12px;
+      padding: 10px 12px;
+      font-size: 0.95rem;
+      line-height: 1.35;
+      cursor: grab;
+      max-width: 240px;
+      user-select: none;
+    }
 
-.drop{
-border:2px dashed gray;
-width:100%;
-min-height:80px;
-display:flex;
-align-items:center;
-justify-content:center;
-background:white;
-margin-bottom:15px;
-}
+    .event-card.dragging {
+      opacity: 0.5;
+    }
 
-.year{
-font-weight:bold;
-}
+    .timeline-wrap {
+      margin-top: 10px;
+      overflow-x: auto;
+      padding-bottom: 20px;
+    }
 
-.line{
-position:absolute;
-height:4px;
-background:black;
-width:100%;
-top:165px;
-left:0;
-z-index:-1;
-}
+    .timeline-grid {
+      min-width: 1200px;
+      display: grid;
+      grid-template-columns: repeat(16, 1fr);
+      gap: 10px;
+      align-items: end;
+      position: relative;
+    }
 
-button{
-margin-top:30px;
-padding:10px 20px;
-font-size:16px;
-}
+    .slot-col {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      position: relative;
+    }
 
-</style>
+    .dropzone {
+      width: 100%;
+      min-height: 88px;
+      border: 2px dashed #94a3b8;
+      border-radius: 12px;
+      background: #ffffff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 8px;
+      text-align: center;
+      margin-bottom: 18px;
+    }
+
+    .dropzone.empty::before {
+      content: "Drop here";
+      color: #94a3b8;
+      font-size: 0.9rem;
+    }
+
+    .dropzone.over {
+      border-color: var(--blue);
+      background: #eff6ff;
+    }
+
+    .dropzone.correct {
+      border-color: var(--green);
+      background: #dcfce7;
+    }
+
+    .dropzone.wrong {
+      border-color: var(--red);
+      background: #fee2e2;
+    }
+
+    .dropzone .event-card {
+      width: 100%;
+      max-width: none;
+      background: transparent;
+      border: none;
+      padding: 0;
+      cursor: grab;
+    }
+
+    .stem {
+      width: 4px;
+      height: 36px;
+      background: #374151;
+      border-radius: 4px;
+    }
+
+    .dot {
+      width: 16px;
+      height: 16px;
+      border-radius: 50%;
+      background: #374151;
+      margin-top: -2px;
+    }
+
+    .year {
+      margin-top: 8px;
+      font-weight: 700;
+      font-size: 1rem;
+      text-align: center;
+    }
+
+    .line {
+      position: relative;
+      top: 122px;
+      height: 4px;
+      background: #374151;
+      grid-column: 1 / -1;
+      z-index: 0;
+    }
+
+    .timeline-grid > .slot-col {
+      z-index: 1;
+    }
+
+    .actions {
+      margin-top: 22px;
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    button {
+      border: none;
+      border-radius: 12px;
+      padding: 12px 18px;
+      font-size: 1rem;
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    .submit-btn {
+      background: var(--blue);
+      color: white;
+    }
+
+    .reset-btn {
+      background: #e5e7eb;
+      color: #111827;
+    }
+
+    .feedback {
+      margin-top: 14px;
+      min-height: 28px;
+      font-weight: 700;
+    }
+
+    .feedback.good { color: var(--green); }
+    .feedback.bad { color: var(--red); }
+
+    .progress {
+      margin-top: 10px;
+      color: var(--muted);
+      font-weight: 700;
+    }
+  </style>
 </head>
-
 <body>
+  <div class="app">
+    <h1>History of Genetic Engineering Timeline Game</h1>
+    <div class="subtle">
+      Drag each event from the word bank into the box above the correct year.
+      When you press <b>Submit</b>, any event in the wrong place will return to the word bank.
+    </div>
 
-<h1>History of Genetic Engineering</h1>
-<p>Drag each event into the correct year.</p>
+    <div class="word-bank">
+      <h2>Word Bank</h2>
+      <div class="bank-items" id="bank"></div>
+    </div>
 
-<div class="wordbank">
+    <div class="timeline-wrap">
+      <div class="timeline-grid" id="timeline">
+        <div class="line"></div>
+      </div>
+    </div>
 
-<h2>Word Bank</h2>
+    <div class="actions">
+      <button class="submit-btn" id="submitBtn">Submit</button>
+      <button class="reset-btn" id="resetBtn">Reset</button>
+    </div>
 
-<div class="bank" id="bank"></div>
+    <div class="progress" id="progressText">Correctly placed: 0 / 16</div>
+    <div class="feedback" id="feedback"></div>
+  </div>
 
-</div>
+  <script>
+    const timelineData = [
+      { year: "1868", id: "1868", event: "Friedrich Miescher isolates DNA" },
+      { year: "1953", id: "1953", event: "Watson and Crick elucidate the double helix structure of DNA" },
+      { year: "1962", id: "1962", event: "Arber provides evidence for restriction enzymes" },
+      { year: "1966", id: "1966", event: "Nirenberg and Khorana finish unraveling the genetic code" },
+      { year: "1967", id: "1967", event: "Gellert discovers DNA ligase enzyme" },
+      { year: "1972-73", id: "1972-73", event: "Berg, Boyer and Cohen develop the first recombinant DNA molecule" },
+      { year: "1975-77", id: "1975-77", event: "Development of DNA sequencing" },
+      { year: "1980-82", id: "1980-82", event: "First transgenic animals produced" },
+      { year: "1984", id: "1984", event: "Sheep-goat chimera created" },
+      { year: "1985", id: "1985", event: "First transgenic farm animals produced" },
+      { year: "1990", id: "1990", event: "Launching of the Human Genome Project" },
+      { year: "1991", id: "1991", event: "First gene therapy trial in humans" },
+      { year: "1997", id: "1997", event: "Birth of Dolly, a cloned sheep" },
+      { year: "2000", id: "2000", event: "Completion of the first draft of the human genome" },
+      { year: "2003", id: "2003", event: "Human genome completed" },
+      { year: "2013", id: "2013", event: "Jolie undergoes preventive double mastectomy after learning she carries a mutation of the BRCA1 gene" }
+    ];
 
-<div style="position:relative">
+    const bank = document.getElementById("bank");
+    const timeline = document.getElementById("timeline");
+    const submitBtn = document.getElementById("submitBtn");
+    const resetBtn = document.getElementById("resetBtn");
+    const feedback = document.getElementById("feedback");
+    const progressText = document.getElementById("progressText");
 
-<div class="line"></div>
+    function shuffle(array) {
+      const arr = [...array];
+      for (let i = arr.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [arr[i], arr[j]] = [arr[j], arr[i]];
+      }
+      return arr;
+    }
 
-<div class="timeline" id="timeline"></div>
+    function makeCard(item) {
+      const card = document.createElement("div");
+      card.className = "event-card";
+      card.draggable = true;
+      card.dataset.id = item.id;
+      card.textContent = item.event;
 
-</div>
+      card.addEventListener("dragstart", () => card.classList.add("dragging"));
+      card.addEventListener("dragend", () => card.classList.remove("dragging"));
 
-<button onclick="check()">Submit</button>
-<button onclick="start()">Reset</button>
+      return card;
+    }
 
-<p id="msg"></p>
+    function makeSlot(item) {
+      const col = document.createElement("div");
+      col.className = "slot-col";
 
-<script>
+      const dropzone = document.createElement("div");
+      dropzone.className = "dropzone empty";
+      dropzone.dataset.id = item.id;
 
-const data=[
+      dropzone.addEventListener("dragover", (e) => {
+        e.preventDefault();
+        dropzone.classList.add("over");
+      });
 
-{year:"1868",id:"1868",text:"Friedrich Miescher isolates DNA"},
-{year:"1953",id:"1953",text:"Double helix structure discovered"},
-{year:"1962",id:"1962",text:"Restriction enzymes discovered"},
-{year:"1966",id:"1966",text:"Genetic code deciphered"},
-{year:"1967",id:"1967",text:"DNA ligase discovered"},
-{year:"1972-73",id:"1972",text:"First recombinant DNA molecule"},
-{year:"1975-77",id:"1975",text:"DNA sequencing developed"},
-{year:"1980-82",id:"1980",text:"First transgenic animals"},
-{year:"1984",id:"1984",text:"Sheep-goat chimera"},
-{year:"1985",id:"1985",text:"First transgenic farm animals"},
-{year:"1990",id:"1990",text:"Human Genome Project begins"},
-{year:"1991",id:"1991",text:"First gene therapy trial"},
-{year:"1997",id:"1997",text:"Dolly cloned"},
-{year:"2000",id:"2000",text:"Human genome draft"},
-{year:"2003",id:"2003",text:"Human genome completed"},
-{year:"2013",id:"2013",text:"BRCA1 preventative surgery news"}
+      dropzone.addEventListener("dragleave", () => {
+        dropzone.classList.remove("over");
+      });
 
-]
+      dropzone.addEventListener("drop", (e) => {
+        e.preventDefault();
+        dropzone.classList.remove("over");
 
-const bank=document.getElementById("bank")
-const timeline=document.getElementById("timeline")
+        const dragging = document.querySelector(".dragging");
+        if (!dragging) return;
 
-function shuffle(a){
-return a.sort(()=>Math.random()-0.5)
-}
+        if (dropzone.firstChild) {
+          bank.appendChild(dropzone.firstChild);
+        }
 
-function start(){
+        dropzone.appendChild(dragging);
+        refreshEmptyStates();
+        clearFeedback();
+        updateProgress();
+      });
 
-bank.innerHTML=""
-timeline.innerHTML=""
+      const stem = document.createElement("div");
+      stem.className = "stem";
 
-shuffle([...data]).forEach(e=>{
-let c=document.createElement("div")
-c.className="card"
-c.draggable=true
-c.dataset.id=e.id
-c.textContent=e.text
+      const dot = document.createElement("div");
+      dot.className = "dot";
 
-c.addEventListener("dragstart",()=>c.classList.add("drag"))
-c.addEventListener("dragend",()=>c.classList.remove("drag"))
+      const year = document.createElement("div");
+      year.className = "year";
+      year.textContent = item.year;
 
-bank.appendChild(c)
-})
+      col.appendChild(dropzone);
+      col.appendChild(stem);
+      col.appendChild(dot);
+      col.appendChild(year);
 
-data.forEach(e=>{
+      return col;
+    }
 
-let col=document.createElement("div")
-col.className="slot"
+    function refreshEmptyStates() {
+      document.querySelectorAll(".dropzone").forEach(zone => {
+        zone.classList.toggle("empty", !zone.firstChild);
+      });
+    }
 
-let drop=document.createElement("div")
-drop.className="drop"
-drop.dataset.id=e.id
+    function clearFeedback() {
+      document.querySelectorAll(".dropzone").forEach(zone => {
+        zone.classList.remove("correct", "wrong");
+      });
+      feedback.textContent = "";
+      feedback.className = "feedback";
+    }
 
-drop.addEventListener("dragover",e=>e.preventDefault())
+    function updateProgress() {
+      let correct = 0;
+      document.querySelectorAll(".dropzone").forEach(zone => {
+        const card = zone.firstChild;
+        if (card && card.dataset.id === zone.dataset.id) {
+          correct += 1;
+        }
+      });
+      progressText.textContent = `Correctly placed: ${correct} / ${timelineData.length}`;
+    }
 
-drop.addEventListener("drop",e=>{
-e.preventDefault()
+    function setupGame() {
+      bank.innerHTML = "";
+      feedback.textContent = "";
+      feedback.className = "feedback";
 
-let d=document.querySelector(".drag")
+      timeline.querySelectorAll(".slot-col").forEach(el => el.remove());
 
-if(drop.firstChild){
-bank.appendChild(drop.firstChild)
-}
+      shuffle(timelineData).forEach(item => {
+        bank.appendChild(makeCard(item));
+      });
 
-drop.appendChild(d)
+      timelineData.forEach(item => {
+        timeline.appendChild(makeSlot(item));
+      });
 
-})
+      refreshEmptyStates();
+      updateProgress();
+    }
 
-let yr=document.createElement("div")
-yr.className="year"
-yr.textContent=e.year
+    submitBtn.addEventListener("click", () => {
+      let allCorrect = true;
+      let returned = 0;
 
-col.appendChild(drop)
-col.appendChild(yr)
+      document.querySelectorAll(".dropzone").forEach(zone => {
+        zone.classList.remove("correct", "wrong");
+        const card = zone.firstChild;
 
-timeline.appendChild(col)
+        if (!card) {
+          allCorrect = false;
+          return;
+        }
 
-})
+        if (card.dataset.id === zone.dataset.id) {
+          zone.classList.add("correct");
+        } else {
+          zone.classList.add("wrong");
+          bank.appendChild(card);
+          returned += 1;
+          allCorrect = false;
+        }
+      });
 
-}
+      refreshEmptyStates();
+      updateProgress();
 
-function check(){
+      if (allCorrect) {
+        feedback.textContent = "Perfect — every event is in the correct order.";
+        feedback.className = "feedback good";
+      } else {
+        feedback.textContent = `${returned} event(s) were incorrect and returned to the word bank.`;
+        feedback.className = "feedback bad";
+      }
+    });
 
-let wrong=0
+    resetBtn.addEventListener("click", setupGame);
 
-document.querySelectorAll(".drop").forEach(d=>{
-
-let c=d.firstChild
-
-if(!c)return
-
-if(c.dataset.id!==d.dataset.id){
-
-bank.appendChild(c)
-
-wrong++
-
-}
-
-})
-
-if(wrong==0){
-msg.innerText="Perfect! All correct."
-}
-else{
-msg.innerText=wrong+" incorrect events returned to word bank."
-}
-
-}
-
-start()
-
-</script>
-
+    setupGame();
+  </script>
 </body>
 </html>
