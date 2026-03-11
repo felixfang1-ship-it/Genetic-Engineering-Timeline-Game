@@ -115,6 +115,7 @@
     .timeline-wrap {
       overflow-x: auto;
       padding-bottom: 12px;
+      position: relative;
     }
 
     .timeline-grid {
@@ -123,6 +124,8 @@
       grid-template-columns: repeat(16, minmax(72px, 1fr));
       gap: 10px;
       align-items: start;
+      position: relative;
+      padding-top: 0;
     }
 
     .slot-col {
@@ -130,6 +133,7 @@
       flex-direction: column;
       align-items: center;
       position: relative;
+      z-index: 1;
 
       
     }
@@ -209,12 +213,14 @@
     }
 
     .hline {
-      grid-column: 1 / -1;
-      height: 5px;
+      position: absolute;
+      left: 0;
+      right: 0;
+      top: 108px;
+      height: 4px;
       background: var(--line);
       border-radius: 999px;
-      margin-top: -6px;
-      margin-bottom: 9px;
+      z-index: 0;
     }
 
     .actions {
@@ -498,6 +504,7 @@
   </script>
 </body>
 </html>
+
 
 
 
