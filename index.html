@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Genetic Engineering Timeline Game</title>
+
+<style>
+
+body{
+font-family:Arial;
+background:#f5f7fb;
+padding:30px;
+}
+
+h1{
+margin-bottom:10px;
+}
+
+.wordbank{
+border:3px solid black;
+padding:15px;
+margin-bottom:40px;
+background:white;
+}
+
+.wordbank h2{
+text-align:center;
+}
+
+.bank{
+display:flex;
+flex-wrap:wrap;
+gap:10px;
+}
+
+.card{
+background:#e7f0ff;
+border:1px solid #8fb4ff;
+padding:8px 10px;
+border-radius:8px;
+cursor:grab;
+}
+
+.timeline{
+display:grid;
+grid-template-columns:repeat(16,1fr);
+gap:10px;
+align-items:end;
+margin-top:40px;
+}
+
+.slot{
+display:flex;
+flex-direction:column;
+align-items:center;
+}
+
+.drop{
+border:2px dashed gray;
+width:100%;
+min-height:80px;
+display:flex;
+align-items:center;
+justify-content:center;
+background:white;
+margin-bottom:15px;
+}
+
+.year{
+font-weight:bold;
+}
+
+.line{
+position:absolute;
+height:4px;
+background:black;
+width:100%;
+top:165px;
+left:0;
+z-index:-1;
+}
+
+button{
+margin-top:30px;
+padding:10px 20px;
+font-size:16px;
+}
+
+</style>
+</head>
+
+<body>
+
+<h1>History of Genetic Engineering</h1>
+<p>Drag each event into the correct year.</p>
+
+<div class="wordbank">
+
+<h2>Word Bank</h2>
+
+<div class="bank" id="bank"></div>
+
+</div>
+
+<div style="position:relative">
+
+<div class="line"></div>
+
+<div class="timeline" id="timeline"></div>
+
+</div>
+
+<button onclick="check()">Submit</button>
+<button onclick="start()">Reset</button>
+
+<p id="msg"></p>
+
+<script>
+
+const data=[
+
+{year:"1868",id:"1868",text:"Friedrich Miescher isolates DNA"},
+{year:"1953",id:"1953",text:"Double helix structure discovered"},
+{year:"1962",id:"1962",text:"Restriction enzymes discovered"},
+{year:"1966",id:"1966",text:"Genetic code deciphered"},
+{year:"1967",id:"1967",text:"DNA ligase discovered"},
+{year:"1972-73",id:"1972",text:"First recombinant DNA molecule"},
+{year:"1975-77",id:"1975",text:"DNA sequencing developed"},
+{year:"1980-82",id:"1980",text:"First transgenic animals"},
+{year:"1984",id:"1984",text:"Sheep-goat chimera"},
+{year:"1985",id:"1985",text:"First transgenic farm animals"},
+{year:"1990",id:"1990",text:"Human Genome Project begins"},
+{year:"1991",id:"1991",text:"First gene therapy trial"},
+{year:"1997",id:"1997",text:"Dolly cloned"},
+{year:"2000",id:"2000",text:"Human genome draft"},
+{year:"2003",id:"2003",text:"Human genome completed"},
+{year:"2013",id:"2013",text:"BRCA1 preventative surgery news"}
+
+]
+
+const bank=document.getElementById("bank")
+const timeline=document.getElementById("timeline")
+
+function shuffle(a){
+return a.sort(()=>Math.random()-0.5)
+}
+
+function start(){
+
+bank.innerHTML=""
+timeline.innerHTML=""
+
+shuffle([...data]).forEach(e=>{
+let c=document.createElement("div")
+c.className="card"
+c.draggable=true
+c.dataset.id=e.id
+c.textContent=e.text
+
+c.addEventListener("dragstart",()=>c.classList.add("drag"))
+c.addEventListener("dragend",()=>c.classList.remove("drag"))
+
+bank.appendChild(c)
+})
+
+data.forEach(e=>{
+
+let col=document.createElement("div")
+col.className="slot"
+
+let drop=document.createElement("div")
+drop.className="drop"
+drop.dataset.id=e.id
+
+drop.addEventListener("dragover",e=>e.preventDefault())
+
+drop.addEventListener("drop",e=>{
+e.preventDefault()
+
+let d=document.querySelector(".drag")
+
+if(drop.firstChild){
+bank.appendChild(drop.firstChild)
+}
+
+drop.appendChild(d)
+
+})
+
+let yr=document.createElement("div")
+yr.className="year"
+yr.textContent=e.year
+
+col.appendChild(drop)
+col.appendChild(yr)
+
+timeline.appendChild(col)
+
+})
+
+}
+
+function check(){
+
+let wrong=0
+
+document.querySelectorAll(".drop").forEach(d=>{
+
+let c=d.firstChild
+
+if(!c)return
+
+if(c.dataset.id!==d.dataset.id){
+
+bank.appendChild(c)
+
+wrong++
+
+}
+
+})
+
+if(wrong==0){
+msg.innerText="Perfect! All correct."
+}
+else{
+msg.innerText=wrong+" incorrect events returned to word bank."
+}
+
+}
+
+start()
+
+</script>
+
+</body>
+</html>
