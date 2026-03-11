@@ -12,8 +12,12 @@
       --muted: #6b7280;
       --border: #d9e2ec;
       --blue: #2563eb;
+      --blue-soft: #eff6ff;
       --green: #16a34a;
+      --green-soft: #dcfce7;
       --red: #dc2626;
+      --red-soft: #fee2e2;
+      --line: #374151;
       --shadow: 0 10px 25px rgba(15, 23, 42, 0.08);
     }
 
@@ -24,17 +28,17 @@
       font-family: Arial, Helvetica, sans-serif;
       background: var(--bg);
       color: var(--text);
-      padding: 24px;
+      padding: 20px;
     }
 
     .app {
-      max-width: 1300px;
+      max-width: 1400px;
       margin: 0 auto;
       background: var(--card);
       border: 1px solid var(--border);
       border-radius: 20px;
       box-shadow: var(--shadow);
-      padding: 24px;
+      padding: 20px;
     }
 
     h1 {
@@ -44,150 +48,168 @@
 
     .subtle {
       color: var(--muted);
-      margin-bottom: 18px;
       line-height: 1.5;
+      margin-bottom: 16px;
+    }
+
+    .topbar {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+      margin-bottom: 16px;
+    }
+
+    .pill {
+      background: #f8fafc;
+      border: 1px solid var(--border);
+      border-radius: 999px;
+      padding: 8px 12px;
+      font-size: 0.95rem;
+      font-weight: 700;
     }
 
     .word-bank {
-      border: 2px solid #374151;
-      border-radius: 14px;
+      border: 2px solid var(--line);
+      border-radius: 16px;
       padding: 16px;
-      margin-bottom: 28px;
       background: #fff;
+      margin-bottom: 24px;
     }
 
     .word-bank h2 {
       margin: 0 0 14px;
       text-align: center;
-      font-size: 1.5rem;
+      font-size: 1.4rem;
     }
 
     .bank-items {
       display: flex;
       flex-wrap: wrap;
       gap: 12px;
-      min-height: 80px;
+      min-height: 72px;
     }
 
     .event-card {
-      background: #eff6ff;
-      border: 1px solid #bfdbfe;
+      background: var(--blue-soft);
+      border: 2px solid #bfdbfe;
       border-radius: 12px;
       padding: 10px 12px;
       font-size: 0.95rem;
       line-height: 1.35;
-      cursor: grab;
       max-width: 240px;
       user-select: none;
+      cursor: pointer;
+      transition: transform 0.12s ease, border-color 0.12s ease, background 0.12s ease;
     }
 
-    .event-card.dragging {
-      opacity: 0.5;
+    .event-card:hover {
+      transform: translateY(-1px);
+    }
+
+    .event-card.selected {
+      border-color: var(--blue);
+      background: #dbeafe;
+      box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
     }
 
     .timeline-wrap {
-      margin-top: 10px;
       overflow-x: auto;
-      padding-bottom: 20px;
+      padding-bottom: 12px;
     }
 
     .timeline-grid {
-      min-width: 1200px;
+      min-width: 1280px;
       display: grid;
-      grid-template-columns: repeat(16, 1fr);
+      grid-template-columns: repeat(16, minmax(72px, 1fr));
       gap: 10px;
-      align-items: end;
-      position: relative;
+      align-items: start;
     }
 
     .slot-col {
       display: flex;
       flex-direction: column;
       align-items: center;
-      position: relative;
     }
 
     .dropzone {
       width: 100%;
-      min-height: 88px;
+      min-height: 92px;
       border: 2px dashed #94a3b8;
       border-radius: 12px;
-      background: #ffffff;
+      background: #fff;
       display: flex;
       align-items: center;
       justify-content: center;
-      padding: 8px;
       text-align: center;
-      margin-bottom: 18px;
+      padding: 8px;
+      margin-bottom: 12px;
+      transition: border-color 0.12s ease, background 0.12s ease;
     }
 
     .dropzone.empty::before {
-      content: "Drop here";
+      content: "Tap to place";
       color: #94a3b8;
       font-size: 0.9rem;
     }
 
-    .dropzone.over {
+    .dropzone.active {
       border-color: var(--blue);
       background: #eff6ff;
     }
 
     .dropzone.correct {
       border-color: var(--green);
-      background: #dcfce7;
+      background: var(--green-soft);
     }
 
     .dropzone.wrong {
       border-color: var(--red);
-      background: #fee2e2;
+      background: var(--red-soft);
     }
 
     .dropzone .event-card {
-      width: 100%;
       max-width: none;
+      width: 100%;
       background: transparent;
       border: none;
       padding: 0;
-      cursor: grab;
+      box-shadow: none;
     }
 
     .stem {
       width: 4px;
-      height: 36px;
-      background: #374151;
-      border-radius: 4px;
+      height: 32px;
+      background: var(--line);
+      border-radius: 999px;
     }
 
     .dot {
       width: 16px;
       height: 16px;
       border-radius: 50%;
-      background: #374151;
+      background: var(--line);
       margin-top: -2px;
     }
 
     .year {
       margin-top: 8px;
       font-weight: 700;
-      font-size: 1rem;
+      font-size: 0.98rem;
       text-align: center;
+      white-space: nowrap;
     }
 
-    .line {
-      position: relative;
-      top: 122px;
-      height: 4px;
-      background: #374151;
+    .hline {
       grid-column: 1 / -1;
-      z-index: 0;
-    }
-
-    .timeline-grid > .slot-col {
-      z-index: 1;
+      height: 4px;
+      background: var(--line);
+      border-radius: 999px;
+      margin-top: -22px;
+      margin-bottom: 18px;
     }
 
     .actions {
-      margin-top: 22px;
+      margin-top: 18px;
       display: flex;
       gap: 12px;
       flex-wrap: wrap;
@@ -221,10 +243,11 @@
     .feedback.good { color: var(--green); }
     .feedback.bad { color: var(--red); }
 
-    .progress {
-      margin-top: 10px;
-      color: var(--muted);
-      font-weight: 700;
+    @media (max-width: 700px) {
+      body { padding: 12px; }
+      .app { padding: 14px; }
+      .event-card { max-width: 100%; }
+      h1 { font-size: 1.5rem; }
     }
   </style>
 </head>
@@ -232,8 +255,14 @@
   <div class="app">
     <h1>History of Genetic Engineering Timeline Game</h1>
     <div class="subtle">
-      Drag each event from the word bank into the box above the correct year.
-      When you press <b>Submit</b>, any event in the wrong place will return to the word bank.
+      Tap an event in the word bank, then tap a year box to place it.
+      Tap a placed event to send it back to the word bank.
+      Press <b>Submit</b> to check your order. Wrong events return to the bank.
+    </div>
+
+    <div class="topbar">
+      <div class="pill" id="progressText">Correctly placed: 0 / 16</div>
+      <div class="pill" id="selectedText">Selected: none</div>
     </div>
 
     <div class="word-bank">
@@ -242,9 +271,7 @@
     </div>
 
     <div class="timeline-wrap">
-      <div class="timeline-grid" id="timeline">
-        <div class="line"></div>
-      </div>
+      <div class="timeline-grid" id="timeline"></div>
     </div>
 
     <div class="actions">
@@ -252,7 +279,6 @@
       <button class="reset-btn" id="resetBtn">Reset</button>
     </div>
 
-    <div class="progress" id="progressText">Correctly placed: 0 / 16</div>
     <div class="feedback" id="feedback"></div>
   </div>
 
@@ -282,6 +308,9 @@
     const resetBtn = document.getElementById("resetBtn");
     const feedback = document.getElementById("feedback");
     const progressText = document.getElementById("progressText");
+    const selectedText = document.getElementById("selectedText");
+
+    let selectedCard = null;
 
     function shuffle(array) {
       const arr = [...array];
@@ -292,15 +321,43 @@
       return arr;
     }
 
+    function setSelected(card) {
+      document.querySelectorAll(".event-card").forEach(c => c.classList.remove("selected"));
+      document.querySelectorAll(".dropzone").forEach(z => z.classList.remove("active"));
+
+      selectedCard = card;
+
+      if (selectedCard) {
+        selectedCard.classList.add("selected");
+        selectedText.textContent = `Selected: ${selectedCard.textContent}`;
+        document.querySelectorAll(".dropzone").forEach(z => z.classList.add("active"));
+      } else {
+        selectedText.textContent = "Selected: none";
+      }
+    }
+
     function makeCard(item) {
       const card = document.createElement("div");
       card.className = "event-card";
-      card.draggable = true;
       card.dataset.id = item.id;
       card.textContent = item.event;
 
-      card.addEventListener("dragstart", () => card.classList.add("dragging"));
-      card.addEventListener("dragend", () => card.classList.remove("dragging"));
+      card.addEventListener("click", () => {
+        if (card.parentElement && card.parentElement.classList.contains("dropzone")) {
+          bank.appendChild(card);
+          setSelected(null);
+          refreshEmptyStates();
+          clearFeedback();
+          updateProgress();
+          return;
+        }
+
+        if (selectedCard === card) {
+          setSelected(null);
+        } else {
+          setSelected(card);
+        }
+      });
 
       return card;
     }
@@ -313,27 +370,15 @@
       dropzone.className = "dropzone empty";
       dropzone.dataset.id = item.id;
 
-      dropzone.addEventListener("dragover", (e) => {
-        e.preventDefault();
-        dropzone.classList.add("over");
-      });
-
-      dropzone.addEventListener("dragleave", () => {
-        dropzone.classList.remove("over");
-      });
-
-      dropzone.addEventListener("drop", (e) => {
-        e.preventDefault();
-        dropzone.classList.remove("over");
-
-        const dragging = document.querySelector(".dragging");
-        if (!dragging) return;
+      dropzone.addEventListener("click", () => {
+        if (!selectedCard) return;
 
         if (dropzone.firstChild) {
           bank.appendChild(dropzone.firstChild);
         }
 
-        dropzone.appendChild(dragging);
+        dropzone.appendChild(selectedCard);
+        setSelected(null);
         refreshEmptyStates();
         clearFeedback();
         updateProgress();
@@ -384,18 +429,19 @@
 
     function setupGame() {
       bank.innerHTML = "";
+      timeline.innerHTML = "";
       feedback.textContent = "";
       feedback.className = "feedback";
+      selectedCard = null;
+      selectedText.textContent = "Selected: none";
 
-      timeline.querySelectorAll(".slot-col").forEach(el => el.remove());
+      const shuffled = shuffle(timelineData);
+      shuffled.forEach(item => bank.appendChild(makeCard(item)));
+      timelineData.forEach(item => timeline.appendChild(makeSlot(item)));
 
-      shuffle(timelineData).forEach(item => {
-        bank.appendChild(makeCard(item));
-      });
-
-      timelineData.forEach(item => {
-        timeline.appendChild(makeSlot(item));
-      });
+      const line = document.createElement("div");
+      line.className = "hline";
+      timeline.appendChild(line);
 
       refreshEmptyStates();
       updateProgress();
@@ -424,6 +470,7 @@
         }
       });
 
+      setSelected(null);
       refreshEmptyStates();
       updateProgress();
 
@@ -442,3 +489,4 @@
   </script>
 </body>
 </html>
+
